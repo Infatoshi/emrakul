@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "emrakul": {
+      "command": "uv",
+      "args": ["run", "--directory", "/Users/infatoshi/emrakul", "python", "-m", "emrakul.mcp_server"]
+    }
+  }
+}
