@@ -4,7 +4,7 @@ import argparse
 import asyncio
 import sys
 
-from emrakul.workers import run_codex, run_cursor, run_gemini, run_kimi, run_opencode
+from emrakul.workers import run_codex, run_cursor, run_kimi, run_opencode
 
 
 def main():
@@ -18,7 +18,7 @@ def main():
     delegate = subparsers.add_parser("delegate", help="Run a task with a specific worker")
     delegate.add_argument(
         "worker",
-        choices=["codex", "gemini", "kimi", "opencode", "cursor"],
+        choices=["codex", "kimi", "cursor", "opencode"],
         help="Worker to delegate to",
     )
     delegate.add_argument("task", help="Task description")
@@ -31,18 +31,25 @@ def main():
         "-d", "--dir",
         help="Working directory",
     )
+    delegate.add_argument(
+        "--device",
+        choices=["local", "theodolos"],
+        default="local",
+        help="Device to run on (default: local)",
+    )
 
     # serve subcommand
-    serve = subparsers.add_parser("serve", help="Run the MCP server")
+    subparsers.add_parser("serve", help="Run the MCP server")
 
     args = parser.parse_args()
 
     if args.command == "delegate":
         result = asyncio.run(_delegate(args))
         if result.success:
+            print(f"[{result.backend}@{result.device}]")
             print(result.output)
         else:
-            print(f"Error: {result.error}", file=sys.stderr)
+            print(f"[{result.backend}@{result.device}] Error: {result.error}", file=sys.stderr)
             sys.exit(1)
 
     elif args.command == "serve":
@@ -53,15 +60,13 @@ def main():
 async def _delegate(args):
     """Run delegation based on worker type."""
     if args.worker == "codex":
-        return await run_codex(args.task, args.files, args.dir)
-    elif args.worker == "gemini":
-        return await run_gemini(args.task, args.files, args.dir)
+        return await run_codex(args.task, args.files, args.dir, args.device)
     elif args.worker == "kimi":
-        return await run_kimi(args.task)
-    elif args.worker == "opencode":
-        return await run_opencode(args.task, args.files, args.dir)
+        return await run_kimi(args.task, args.device)
     elif args.worker == "cursor":
-        return await run_cursor(args.task, args.files, args.dir)
+        return await run_cursor(args.task, args.files, args.dir, args.device)
+    elif args.worker == "opencode":
+        return await run_opencode(args.task, args.files, args.dir, args.device)
 
 
 if __name__ == "__main__":

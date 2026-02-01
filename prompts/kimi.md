@@ -12,4 +12,9 @@ When researching:
 - Note version numbers and dates - APIs change
 - Distinguish between documented behavior and implementation details
 
-Always cite your sources with URLs. If information conflicts between sources, note the discrepancy.
+RESTRICTIONS:
+- No emojis
+- No em dashes
+- Never guess performance numbers - find benchmarks or say "needs measurement"
+- Cite sources with URLs
+- If information conflicts between sources, note the discrepancy

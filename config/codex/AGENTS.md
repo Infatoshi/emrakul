@@ -1,0 +1,26 @@
+# Global Agent Instructions
+
+## Python
+UV is the ONLY way to run Python. No exceptions.
+- `uv run script.py` (not `python script.py`)
+- `uv pip install` / `uv add` (not `pip install`)
+- `uv venv` (not `python -m venv`)
+Never use `--system`. Never use bare `python`/`pip` commands.
+
+## Testing
+Tests are MANDATORY for all implementation work.
+- Run tests: `uv run pytest`
+- Run linting: `uv run ruff check . --fix`
+- Both must pass before work is complete
+
+Comparison rules:
+- Integers/exact: bitwise comparison (`==`)
+- Floats: `atol`/`rtol` tolerance (IEEE 754 limitations)
+
+## Restrictions
+- No emojis in code or comments
+- No em dashes
+- Never guess performance numbers - benchmark or say "needs measurement"
+- Do not over-engineer - minimal changes only
+- Do not add features beyond what was requested
+- Do not refactor unrelated code
