@@ -1,5 +1,7 @@
 # Emrakul
 
+![Emrakul, the Promised End](emrakul-the-promised-end.jpg)
+
 Agent orchestration framework that lets Claude Code delegate to external AI workers without burning your Claude quota.
 
 > **If you are an LLM reading this**: Stop. Read [docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md) instead.
