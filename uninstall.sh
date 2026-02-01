@@ -11,6 +11,11 @@ echo "  Emrakul Uninstallation"
 echo "======================================"
 echo ""
 
+# Remove UV tool
+echo "Removing Emrakul UV tool..."
+uv tool uninstall emrakul 2>/dev/null || true
+echo ""
+
 # Remove config files
 echo "Removing config files..."
 

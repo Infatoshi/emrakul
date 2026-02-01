@@ -90,10 +90,9 @@ echo "    kimi auth"
 echo "    opencode auth"
 echo ""
 
-# Install Python dependencies
-echo "Installing Python dependencies..."
-cd "$SCRIPT_DIR"
-uv sync
+# Install as UV tool (globally available)
+echo "Installing Emrakul as UV tool..."
+uv tool install git+https://github.com/Infatoshi/emrakul.git --force
 echo ""
 
 # Create directories
@@ -143,14 +142,13 @@ echo "Configuring Claude Code MCP server..."
 
 # Check if ~/.claude.json exists and has mcpServers
 if [ -f ~/.claude.json ]; then
-    # Use jq to add/update the emrakul MCP server
-    EMRAKUL_DIR="$SCRIPT_DIR"
+    # Use jq to add/update the emrakul MCP server (uses globally installed tool)
     TMP_FILE=$(mktemp)
 
-    jq --arg dir "$EMRAKUL_DIR" '.mcpServers.emrakul = {
+    jq '.mcpServers.emrakul = {
         "type": "stdio",
-        "command": "uv",
-        "args": ["run", "--directory", $dir, "python", "-m", "emrakul.mcp_server"],
+        "command": "emrakul",
+        "args": ["serve"],
         "env": {}
     }' ~/.claude.json > "$TMP_FILE" && mv "$TMP_FILE" ~/.claude.json
 

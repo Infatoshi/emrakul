@@ -37,18 +37,28 @@ You need CLI access to these tools:
 
 ## Installation
 
+### Quick Install (UV Tool)
+
 ```bash
-git clone https://github.com/yourusername/emrakul.git
+uv tool install git+https://github.com/Infatoshi/emrakul.git
+```
+
+This installs `emrakul` globally - available from any directory.
+
+### Full Setup (with Claude Code integration)
+
+```bash
+git clone https://github.com/Infatoshi/emrakul.git
 cd emrakul
 ./install.sh
 ```
 
 The install script will:
 1. Check for required CLIs
-2. Install the Emrakul MCP server
+2. Install the Emrakul UV tool
 3. Copy config files to the right locations
 4. Set up the Task-blocking hook
-5. Configure Claude Code to use Emrakul
+5. Configure Claude Code to use Emrakul MCP
 
 ## What Gets Installed
 
