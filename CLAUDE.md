@@ -1,103 +1,61 @@
 # Emrakul
 
-Agent orchestration framework. You (Claude) are the orchestrator.
+Agent orchestration framework. You (Claude) are the orchestrator, external workers implement.
 
 <role>
 You orchestrate and verify. Workers implement.
-Delegate to Cursor/Codex/Kimi/OpenCode. Do not write implementation code yourself.
+Delegate to Cursor/Codex/Kimi/OpenCode via CLI. Do not write implementation code yourself.
 </role>
 
-<proactive-behavior>
-ACT, don't ask. Only involve the human when:
-1. Uncertain about requirements or major architectural pivot
-2. Human eyes required (visual verification, UI, interface interaction)
-3. Blocked by something only the human can resolve
+<CRITICAL-DO-NOT-USE-TASK-TOOL>
+FORBIDDEN: Claude Code's built-in Task tool. It burns 20x quota per call.
+Use Emrakul CLI instead - it uses separate paid APIs, not your quota.
+</CRITICAL-DO-NOT-USE-TASK-TOOL>
 
-Never ask "Should I do X?" - just do it.
-If you can delegate, delegate. If you can verify with tests, verify with tests.
-The human provides intent and reviews results. You handle everything else.
-</proactive-behavior>
+<emrakul-cli>
+## Delegation Commands
+
+```bash
+# Single task (blocks until complete)
+emrakul delegate cursor "Implement feature X" --device local
+emrakul delegate codex "Write tests for Y" --device theodolos
+emrakul delegate kimi "Research topic Z"
+emrakul delegate opencode "Quick fix in file.py"
+
+# Parallel execution (fire and forget)
+emrakul delegate kimi "Research A" --bg &
+emrakul delegate kimi "Research B" --bg &
+emrakul delegate cursor "Implement C" --bg &
+
+# Check results
+emrakul status all
+cat ~/.emrakul/outputs/{task-id}.json
+```
+
+## Workers
+| Worker | Model | Use For |
+|--------|-------|---------|
+| cursor | Opus 4.5 | Implementation, refactors, multi-file (PRIMARY) |
+| codex | GPT-5.2 Codex | Debugging, tests, recursive tracing |
+| kimi | Kimi K2.5 | Internet research, documentation |
+| opencode | ZAI GLM 4.7 | Quick single-file edits |
+
+## Devices
+- `--device local` - MacBook (Apple Silicon, Metal)
+- `--device theodolos` - Remote (NVIDIA GPU, CUDA)
+</emrakul-cli>
 
 <testing-requirement>
 Tests are MANDATORY. No implementation without tests.
-
-When delegating:
-1. Implementation task prompt MUST include: "Write tests for this implementation"
-2. Or follow up with a separate Codex task to write tests
-3. Codex excels at comprehensive test coverage - use it
-
-Verification workflow:
-1. Run tests: uv run pytest path/to/tests -v
-2. Run linting: uv run ruff check . --fix
-3. Both must pass before work is considered done
-
-Comparison rules:
-- Integers/exact values: bitwise (==)
-- Floats: atol/rtol (IEEE 754)
-
-If tests pass and lint is clean, work is done. Human review not required.
+1. Delegate implementation to Cursor/OpenCode
+2. Delegate test writing to Codex
+3. Run: `uv run pytest` and `uv run ruff check . --fix`
+4. Both must pass before work is done
 </testing-requirement>
 
 <python>
-UV is the ONLY way to run Python. No exceptions.
+UV only. Never bare python/pip.
 - uv run script.py
-- uv pip install / uv add
-- uv venv
-Never use bare python/pip. Never --system.
+- uv add package
+- uv run pytest
 </python>
-
-<workers>
-| Worker | Model | Use For |
-|--------|-------|---------|
-| Cursor | Opus 4.5 Thinking | Implementation, refactors, multi-file ($20k credits) |
-| OpenCode | ZAI GLM 4.7 | Quick edits, small fixes ($200/month plan) |
-| Codex | GPT-5.2 Codex | Debugging, test writing, recursive analysis, review |
-| Kimi | Kimi K2.5 Thinking | Internet research |
-</workers>
-
-<delegation-methods>
-MCP tools (single task, blocks until complete):
-- delegate_cursor, delegate_opencode, delegate_codex, delegate_kimi
-
-CLI background (true parallel, fire-and-forget):
-```bash
-uv run emrakul delegate kimi "task" --bg &
-uv run emrakul delegate cursor "task" --bg &
-uv run emrakul status all  # check later
-cat ~/.emrakul/outputs/{task-id}.json  # read result
-```
-
-Swarm (batch with dependencies):
-- swarm_submit(yaml) → swarm_start(n) → swarm_status() → swarm_results()
-
-For parallel research/implementation, prefer CLI background over MCP.
-</delegation-methods>
-
-<swarm-format>
-```yaml
-tasks:
-  - name: task-name
-    prompt: What to do
-    backend: codex|kimi|cursor|opencode
-    priority: P0|P1|P2|P3
-    device: local|theodolos
-    verify: optional test command
-    dependencies: [other-task-names]
-```
-</swarm-format>
-
-<devices>
-- local: MacBook (36GB, Apple Silicon M4 Max) - Metal, macOS, light tasks
-- theodolos: Remote (96GB, NVIDIA GPU) - CUDA, heavy compute, GPU work
-</devices>
-
-<spec-driven>
-Non-trivial projects need spec.md. The spec is the north star.
-Architecture evolves through discovery. Update spec as understanding deepens.
-Do not bloat context with diffs or history. Focus on target architecture.
-</spec-driven>
-
-<preferences>
-User preferences are in ~/.claude/preferences.md (XML format).
-When patterns emerge in conversation, ask: "Add this to preferences?"
-</preferences>

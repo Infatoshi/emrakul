@@ -10,19 +10,14 @@ The Task tool burns 20x quota per call. A PreToolUse hook blocks it, but if you 
 
 ## What To Use Instead
 
-Use Emrakul MCP tools for all delegation:
+Use the Emrakul CLI (installed globally via `uv tool install`):
 
-| Tool | Use For |
-|------|---------|
-| `delegate_cursor` | Implementation, refactors, multi-file (Opus 4.5, PRIMARY) |
-| `delegate_codex` | Tests, debugging, recursive analysis (GPT-5.2 Codex) |
-| `delegate_kimi` | Internet research (Kimi K2.5) |
-| `delegate_opencode` | Quick single-file edits (ZAI GLM 4.7) |
-| `swarm_submit` | Batch parallel tasks (YAML format) |
-| `swarm_start` | Start swarm workers |
-| `swarm_status` | Check swarm progress |
-| `swarm_results` | Get completed task outputs |
-| `swarm_clear` | Clear task queue |
+```bash
+emrakul delegate cursor "task"   # Implementation (Opus 4.5) - PRIMARY
+emrakul delegate codex "task"    # Tests, debugging (GPT-5.2 Codex)
+emrakul delegate kimi "task"     # Internet research (Kimi K2.5)
+emrakul delegate opencode "task" # Quick edits (ZAI GLM 4.7)
+```
 
 ## When To Delegate vs Do Directly
 
@@ -32,72 +27,53 @@ Use Emrakul MCP tools for all delegation:
 - Running commands
 - Git operations
 
-**Delegate** (use Emrakul MCP):
+**Delegate** (use Emrakul CLI):
 - Multi-file implementations
 - Writing comprehensive tests
 - Debugging complex issues
 - Internet research
 - Any task that would benefit from parallel execution
 
-## Delegation Examples
+## Parallel Execution
 
-### Single Task (MCP - blocks until complete)
-```python
-delegate_cursor(
-    task="Implement user authentication with JWT",
-    working_dir="/path/to/project",
-    device="local"  # or "theodolos" for GPU work
-)
-```
-
-### True Parallel Execution (Bash background - preferred for multiple tasks)
-Use Bash with `run_in_background: true` for fire-and-forget parallel execution:
+Use `--bg &` for true parallelism - returns immediately, runs in background:
 
 ```bash
-# Launch multiple tasks in parallel (each returns immediately)
-uv run emrakul delegate kimi "Research GPU fundamentals" --bg &
-uv run emrakul delegate kimi "Research aerospace GPU" --bg &
-uv run emrakul delegate cursor "Implement feature X" --bg &
+# Launch multiple tasks in parallel
+emrakul delegate kimi "Research GPU fundamentals" --bg &
+emrakul delegate kimi "Research aerospace GPU" --bg &
+emrakul delegate cursor "Implement feature X" --bg &
 
 # Continue working on other things...
 
 # Check status later
-uv run emrakul status all
+emrakul status all
 
 # Read specific result
 cat ~/.emrakul/outputs/kimi-abc123.json
 ```
 
-This is better than MCP for parallel work because:
+This is the preferred pattern for multiple independent tasks because:
 - Tasks run truly in parallel (not sequential)
-- Claude can continue working while tasks execute
+- You can continue working while tasks execute
 - Results persist to files for later reading
 
-### Batch Parallel (Swarm - for coordinated tasks with dependencies)
-```python
-swarm_submit(tasks_yaml="""
-tasks:
-  - name: implement-api
-    prompt: Add REST API for users
-    backend: cursor
-    priority: P0
+## CLI Options
 
-  - name: write-tests
-    prompt: Write tests for user API
-    backend: codex
-    priority: P1
-    dependencies: [implement-api]
-""")
-swarm_start(num_workers=3)
-# ... later ...
-swarm_status()
-swarm_results()
+```
+emrakul delegate <worker> "task"
+  --device local|theodolos   # Where to run (default: local)
+  --dir /path/to/project     # Working directory
+  --files file1.py file2.py  # Context files (cursor/codex/opencode)
+  --bg                       # Background mode
+  --output /path/to/out.json # Custom output file
+  --json                     # JSON output format
 ```
 
 ## Device Selection
 
-- `device="local"` - MacBook, Apple Silicon, Metal
-- `device="theodolos"` - Remote workstation, NVIDIA GPU, CUDA
+- `--device local` - MacBook (Apple Silicon, Metal)
+- `--device theodolos` - Remote workstation (NVIDIA GPU, CUDA)
 
 Use theodolos for:
 - GPU-accelerated work
@@ -108,7 +84,7 @@ Use theodolos for:
 
 All delegated implementation work MUST include tests:
 1. Include "write tests" in the task prompt, OR
-2. Follow up with a `delegate_codex` task specifically for tests
+2. Follow up with a `delegate codex` task specifically for tests
 
 Verification:
 ```bash
@@ -130,13 +106,3 @@ Use `uv` for everything:
 - Never guess performance numbers - benchmark or say "needs measurement"
 - Do not over-engineer
 - Do not add features beyond the task
-
-## Workflow
-
-1. Understand the task
-2. Decide: direct edit or delegation?
-3. If delegating, choose the right worker
-4. If parallel tasks, use swarm
-5. After delegation completes, verify with tests
-6. Run linting
-7. Report results

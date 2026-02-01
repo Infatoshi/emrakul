@@ -12,9 +12,6 @@ echo "  Emrakul Installation"
 echo "======================================"
 echo ""
 
-# Get the directory where the script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # Check for required CLIs
 echo "Checking prerequisites..."
 echo ""
@@ -100,7 +97,11 @@ echo "Creating config directories..."
 mkdir -p ~/.claude/hooks
 mkdir -p ~/.codex
 mkdir -p ~/.cursor/rules
+mkdir -p ~/.emrakul/outputs
 echo ""
+
+# Get the directory where the script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Backup existing configs
 backup_if_exists() {
@@ -122,7 +123,7 @@ echo "Installing config files..."
 cp "$SCRIPT_DIR/config/claude/CLAUDE.md" ~/.claude/CLAUDE.md
 echo "  Installed ~/.claude/CLAUDE.md"
 
-# Hook
+# Hook to block Task tool
 cp "$SCRIPT_DIR/config/hooks/block-task-tool.sh" ~/.claude/hooks/
 chmod +x ~/.claude/hooks/block-task-tool.sh
 echo "  Installed ~/.claude/hooks/block-task-tool.sh"
@@ -137,28 +138,8 @@ echo "  Installed ~/.cursor/rules/emrakul.mdc"
 
 echo ""
 
-# Configure Claude Code MCP
-echo "Configuring Claude Code MCP server..."
-
-# Check if ~/.claude.json exists and has mcpServers
-if [ -f ~/.claude.json ]; then
-    # Use jq to add/update the emrakul MCP server (uses globally installed tool)
-    TMP_FILE=$(mktemp)
-
-    jq '.mcpServers.emrakul = {
-        "type": "stdio",
-        "command": "emrakul",
-        "args": ["serve"],
-        "env": {}
-    }' ~/.claude.json > "$TMP_FILE" && mv "$TMP_FILE" ~/.claude.json
-
-    echo "  Added Emrakul MCP server to ~/.claude.json"
-else
-    echo -e "${YELLOW}  Warning: ~/.claude.json not found. Run 'claude' once first.${NC}"
-fi
-
-# Update settings.json for hooks
-echo "Configuring hooks..."
+# Configure hooks in Claude settings
+echo "Configuring Task-blocking hook..."
 SETTINGS_FILE=~/.claude/settings.json
 
 if [ -f "$SETTINGS_FILE" ]; then
@@ -192,12 +173,16 @@ echo "======================================"
 echo -e "  ${GREEN}Installation complete!${NC}"
 echo "======================================"
 echo ""
-echo "Next steps:"
-echo "  1. Restart Claude Code to pick up new config"
-echo "  2. The Task tool is now blocked"
-echo "  3. Use delegate_cursor, delegate_codex, etc. for work"
+echo "Usage:"
+echo "  emrakul delegate cursor 'Implement feature X'"
+echo "  emrakul delegate codex 'Write tests for Y'"
+echo "  emrakul delegate kimi 'Research topic Z'"
+echo "  emrakul delegate opencode 'Quick fix'"
 echo ""
-echo "Test with:"
-echo "  claude"
-echo "  > delegate_cursor(task='Hello world test')"
+echo "Parallel execution:"
+echo "  emrakul delegate kimi 'task 1' --bg &"
+echo "  emrakul delegate kimi 'task 2' --bg &"
+echo "  emrakul status all"
+echo ""
+echo "Restart Claude Code to pick up the new config."
 echo ""

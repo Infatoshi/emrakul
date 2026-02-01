@@ -12,14 +12,14 @@ Claude Code's native Task tool spawns sub-agents that consume your quota at 20x 
 
 ## The Solution
 
-Emrakul routes work to external AI services via MCP (Model Context Protocol):
+Emrakul is a CLI that routes work to external AI services:
 
 | Worker | Model | Best For |
 |--------|-------|----------|
-| **Cursor** | Opus 4.5 | Implementation, refactors, multi-file changes |
-| **Codex** | GPT-5.2 Codex | Debugging, test writing, recursive analysis |
-| **Kimi** | Kimi K2.5 | Internet research, documentation lookup |
-| **OpenCode** | ZAI GLM 4.7 | Quick edits, small fixes |
+| **cursor** | Opus 4.5 | Implementation, refactors, multi-file changes |
+| **codex** | GPT-5.2 Codex | Debugging, test writing, recursive analysis |
+| **kimi** | Kimi K2.5 | Internet research, documentation lookup |
+| **opencode** | ZAI GLM 4.7 | Quick edits, small fixes |
 
 These use separate paid APIs - none of them touch your Claude quota.
 
@@ -30,14 +30,14 @@ You need CLI access to these tools:
 | Tool | Install | Auth |
 |------|---------|------|
 | **Claude Code** | `npm install -g @anthropic-ai/claude-code` | `claude login` |
-| **Cursor CLI** | [cursor.com/downloads](https://cursor.com/downloads) (includes CLI) | `cursor login` |
+| **Cursor CLI** | [cursor.com/downloads](https://cursor.com/downloads) | `cursor login` |
 | **Codex CLI** | `npm install -g @openai/codex` | `codex auth` |
 | **Kimi CLI** | `pip install kimi-cli` | `kimi auth` |
 | **OpenCode** | `pip install opencode` | `opencode auth` |
 
 ## Installation
 
-### Quick Install (UV Tool)
+### Quick Install
 
 ```bash
 uv tool install git+https://github.com/Infatoshi/emrakul.git
@@ -56,88 +56,69 @@ cd emrakul
 The install script will:
 1. Check for required CLIs
 2. Install the Emrakul UV tool
-3. Copy config files to the right locations
+3. Copy config files (CLAUDE.md, hooks, etc.)
 4. Set up the Task-blocking hook
-5. Configure Claude Code to use Emrakul MCP
-
-## What Gets Installed
-
-```
-~/.claude/
-  CLAUDE.md              # Global instructions (DO NOT USE TASK TOOL)
-  settings.json          # MCP server config + hooks
-  hooks/
-    block-task-tool.sh   # Blocks native Task tool
-
-~/.codex/
-  AGENTS.md              # Codex instructions
-
-~/.cursor/rules/
-  emrakul.mdc            # Cursor rules
-```
 
 ## Usage
 
-After installation, Claude Code will automatically:
-- Block the native Task tool (preventing quota burn)
-- Have access to `delegate_cursor`, `delegate_codex`, `delegate_kimi`, `delegate_opencode`
-- Have access to `swarm_*` tools for batch parallel work
+### Single Task
 
-### Single Delegation
-
-```
-# In Claude Code, the AI will use:
-delegate_cursor(task="Implement feature X", working_dir="/path/to/project")
-delegate_codex(task="Write tests for module Y", working_dir="/path/to/project")
-delegate_kimi(task="Research how library Z handles edge case")
+```bash
+emrakul delegate cursor "Implement user authentication with JWT"
+emrakul delegate codex "Write tests for the auth module"
+emrakul delegate kimi "Research OAuth2 best practices"
+emrakul delegate opencode "Fix typo in config.py"
 ```
 
-### Batch Parallel (Swarm)
+### Parallel Execution
 
-```yaml
-# Submit multiple tasks
-tasks:
-  - name: implement-auth
-    prompt: Add JWT authentication
-    backend: cursor
-    priority: P0
+Use `--bg &` for true parallelism - tasks run in background:
 
-  - name: write-tests
-    prompt: Write test suite for auth
-    backend: codex
-    priority: P1
-    dependencies: [implement-auth]
+```bash
+emrakul delegate kimi "Research topic 1" --bg &
+emrakul delegate kimi "Research topic 2" --bg &
+emrakul delegate cursor "Implement feature A" --bg &
+emrakul delegate cursor "Implement feature B" --bg &
+
+# Check status later
+emrakul status all
+
+# Read results
+cat ~/.emrakul/outputs/kimi-abc123.json
 ```
 
-## Configuration
+### Options
 
-### Worker Prompts
-
-Edit `prompts/*.md` to customize instructions for each worker:
-- `prompts/cursor.md` - Implementation specialist
-- `prompts/codex.md` - Debugging and testing
-- `prompts/kimi.md` - Research
-- `prompts/opencode.md` - Quick edits
+```
+emrakul delegate <worker> "task"
+  --device local|theodolos   # Where to run (default: local)
+  --dir /path/to/project     # Working directory
+  --files file1.py file2.py  # Context files
+  --bg                       # Background mode
+  --output /path/to/out.json # Custom output file
+  --json                     # JSON output format
+```
 
 ### Devices
 
-Workers can run on different machines:
-- `device="local"` - Your local machine
-- `device="theodolos"` - Remote GPU workstation (configure in `~/.ssh/config`)
+- `--device local` - Your local machine
+- `--device theodolos` - Remote GPU workstation (configure in `~/.ssh/config`)
+
+## How It Works
+
+1. Claude Code reads `~/.claude/CLAUDE.md` which teaches it to use `emrakul delegate` instead of Task tool
+2. A PreToolUse hook blocks any Task tool calls that slip through
+3. `emrakul delegate <worker> "task"` spawns the appropriate CLI
+4. Work happens on external APIs, Claude quota untouched
+5. Results are returned (or saved to file for background tasks)
 
 ## Uninstall
 
 ```bash
 ./uninstall.sh
+# or manually:
+uv tool uninstall emrakul
 ```
-
-## How It Works
-
-1. Claude Code reads `CLAUDE.md` which forbids the native Task tool
-2. A PreToolUse hook blocks any Task tool calls that slip through
-3. The Emrakul MCP server exposes `delegate_*` tools as alternatives
-4. Each `delegate_*` tool spawns the appropriate CLI (cursor, codex, etc.)
-5. Work happens on external APIs, Claude quota untouched
 
 ## License
 
