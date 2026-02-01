@@ -28,6 +28,7 @@ THEODOLOS_BIN = "/home/infatoshi/.local/bin"  # CLI binaries location
 CURSOR_MODEL = "opus-4.5-thinking"
 OPENCODE_MODEL = "zai-coding-plan/glm-4.7"
 CODEX_MODEL = "gpt-5.2-codex"
+KIMI_MODEL = "kimi-code/kimi-for-coding"
 
 
 @dataclass
@@ -162,7 +163,7 @@ async def run_kimi(
     if device == "theodolos":
         cmd = [
             "ssh", THEODOLOS_HOST,
-            f"{THEODOLOS_BIN}/kimi --thinking -p '{escaped_prompt}' --print --output-format stream-json"
+            f"{THEODOLOS_BIN}/kimi -m {KIMI_MODEL} --thinking -p '{escaped_prompt}' --print --output-format stream-json"
         ]
         return await _run_command(cmd, Path.cwd(), timeout, "kimi", device, _parse_kimi_output)
     else:
@@ -176,6 +177,7 @@ async def run_kimi(
 
         cmd = [
             kimi_path,
+            "-m", KIMI_MODEL,
             "--thinking",
             "-p", prompt,
             "--print",
