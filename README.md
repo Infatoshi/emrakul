@@ -70,27 +70,22 @@ emrakul delegate kimi "Research OAuth2 best practices"
 emrakul delegate opencode "Fix typo in config.py"
 ```
 
-### Parallel Execution
+### Parallel Execution (Claude Code)
 
-In Claude Code, use native background execution:
+In Claude Code, ALWAYS use native background execution:
 
 ```python
-# Launch all in parallel (returns immediately with task IDs)
+# ALWAYS use run_in_background=True - returns immediately with task ID
 Bash(command='emrakul delegate kimi "Research topic 1" --json', run_in_background=True)
 Bash(command='emrakul delegate kimi "Research topic 2" --json', run_in_background=True)
-Bash(command='emrakul delegate cursor "Implement feature A" --json', run_in_background=True)
+Bash(command='emrakul delegate cursor "Implement feature" --json', run_in_background=True)
 
 # Claude Code tracks tasks and notifies on completion
 # Read results with TaskOutput
 TaskOutput(task_id="abc123", block=False)
 ```
 
-Or from shell:
-```bash
-emrakul delegate kimi "Research topic 1" --bg &
-emrakul delegate kimi "Research topic 2" --bg &
-emrakul status all
-```
+NEVER run delegation without `run_in_background=True` - you will block and waste time.
 
 ### Options
 
@@ -99,8 +94,6 @@ emrakul delegate <worker> "task"
   --device local|theodolos   # Where to run (default: local)
   --dir /path/to/project     # Working directory
   --files file1.py file2.py  # Context files
-  --bg                       # Background mode
-  --output /path/to/out.json # Custom output file
   --json                     # JSON output format
 ```
 
