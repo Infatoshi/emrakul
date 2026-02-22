@@ -35,8 +35,8 @@ cat ~/.emrakul/outputs/{task-id}.json
 ## Workers
 | Worker | Model | Use For |
 |--------|-------|---------|
-| cursor | Opus 4.5 | Implementation, refactors, multi-file (PRIMARY) |
-| codex | GPT-5.2 Codex | Debugging, tests, recursive tracing |
+| cursor | Opus 4.6 | Implementation, refactors, multi-file (PRIMARY) |
+| codex | GPT-5.3 Codex | Debugging, tests, recursive tracing |
 | kimi | Kimi K2.5 | Internet research, documentation |
 | opencode | ZAI GLM 4.7 | Quick single-file edits |
 

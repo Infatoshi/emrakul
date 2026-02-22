@@ -12,8 +12,8 @@ FORBIDDEN: Claude Code's built-in Task tool, subagent spawning, or any parallel 
 The Task tool burns 20x your quota PER CALL. You WILL hit rate limits.
 
 INSTEAD, use Emrakul CLI for delegation (installed globally via `uv tool install`):
-- `emrakul delegate cursor "task"` - Implementation (Opus 4.5)
-- `emrakul delegate codex "task"` - Tests, debugging (GPT-5.2 Codex)
+- `emrakul delegate cursor "task"` - Implementation (Opus 4.6)
+- `emrakul delegate codex "task"` - Tests, debugging (GPT-5.3 Codex)
 - `emrakul delegate kimi "task"` - Research (Kimi K2.5)
 - `emrakul delegate opencode "task"` - Quick edits (ZAI GLM 4.7)
 
@@ -59,8 +59,8 @@ emrakul delegate <worker> "task"
 ### Worker Selection Guide
 | Worker | Model | Use For |
 |--------|-------|---------|
-| cursor | Opus 4.5 | Implementation, refactors, multi-file (PRIMARY) |
-| codex | GPT-5.2 Codex | Debugging, tests, recursive tracing |
+| cursor | Opus 4.6 | Implementation, refactors, multi-file (PRIMARY) |
+| codex | GPT-5.3 Codex | Debugging, tests, recursive tracing |
 | kimi | Kimi K2.5 | Internet research, documentation |
 | opencode | ZAI GLM 4.7 | Quick single-file edits |
 

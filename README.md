@@ -16,8 +16,8 @@ Emrakul is a CLI that routes work to external AI services:
 
 | Worker | Model | Best For |
 |--------|-------|----------|
-| **cursor** | Opus 4.5 | Implementation, refactors, multi-file changes |
-| **codex** | GPT-5.2 Codex | Debugging, test writing, recursive analysis |
+| **cursor** | Opus 4.6 | Implementation, refactors, multi-file changes |
+| **codex** | GPT-5.3 Codex | Debugging, test writing, recursive analysis |
 | **kimi** | Kimi K2.5 | Internet research, documentation lookup |
 | **opencode** | ZAI GLM 4.7 | Quick edits, small fixes |
 

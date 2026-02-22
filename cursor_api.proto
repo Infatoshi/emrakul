@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package aiserver.v1;
+
+// Cursor API Proto Definitions
+// Extracted from Cursor CLI JavaScript bundle
+// For direct API access to Claude 4.5 Opus, GPT-5.2 Codex, etc.
+
+message StreamUnifiedChatResponse {
+  string text = 1;
+  optional string debugging_only_chat_prompt = 2;
+  optional int32 debugging_only_token_count = 3;
+  he document_citation = 4;
+  optional string filled_prompt = 5;
+  optional bool is_big_file = 6;
+  optional string intermediate_text = 7;
+  optional Qe chunk_identity = 8;
+  optional Ae docs_reference = 9;
+  optional bool is_using_slow_request = 10;
+  optional ge web_citation = 11;
+  optional Ee status_updates = 12;
+  optional l tool_call = 13;
+  optional bool should_break_ai_message = 14;
+  optional l partial_tool_call = 15;
+  optional Ue final_tool_result = 16;
+  optional We symbol_link = 17;
+  optional me conversation_summary = 18;
+  optional ze file_link = 19;
+  optional Ve service_status_update = 20;
+  optional nt viewable_git_context = 21;
+  optional string server_bubble_id = 22;
+  optional Fe context_piece_update = 23;
+  optional je used_code = 24;
+  optional At thinking = 25;
+  optional bool stop_using_dsv3_agentic_model = 26;
+  optional string usage_uuid = 27;
+  optional Ye conversation_summary_starter = 28;
+  optional Vt subagent_return = 29;
+  optional Ge context_window_status = 30;
+  optional qe image_description = 31;
+  optional bool parallel_tool_calls_complete = 32;
+  optional Ce ai_web_search_results = 33;
+  optional He stars_feedback_request = 34;
+  optional string model_provider_request_json = 35;
+  optional l tool_call_v2 = 36;
+  optional i thinking_style = 37;
+}
+
+message StreamChatToolformerContinueRequest {
+  string toolformer_session_id = 1;
+  d tool_result = 2;
+}
+
+message StreamChatToolformerResponse {
+  optional string toolformer_session_id = 1;
+  oneof response_type {
+    ea output = 2;
+    na tool_action = 3;
+    ta thought = 4;
+  }
+}
+
+message Output {
+  string text = 1;
+}
+
+message Thought {
+  string text = 1;
+}
+
+message ToolAction {
+  string user_facing_text = 1;
+  d tool_call = 2;
+  string raw_model_output = 3;
+  bool more_to_come = 4;
+}
+
+message StreamChatResponse {
+  string text = 1;
+  optional string debugging_only_chat_prompt = 2;
+  optional int32 debugging_only_token_count = 3;
+  u document_citation = 4;
+  optional string filled_prompt = 5;
+  optional bool is_big_file = 6;
+  optional string intermediate_text = 7;
+  optional Ro chunk_identity = 8;
+  optional u docs_reference = 9;
+  optional bool is_using_slow_request = 10;
+  optional u web_citation = 11;
+  optional u status_updates = 12;
+  optional Io timing_info = 13;
+  optional u symbol_link = 14;
+  optional u file_link = 15;
+  optional u conversation_summary = 16;
+  optional u service_status_update = 17;
+  optional Bo used_code = 18;
+  optional string server_bubble_id = 22;
+  optional bool stop_using_dsv3_agentic_model = 26;
+  optional string usage_uuid = 27;
+}
+
+message StreamChatContextRequest {
+  m current_file = 1;
+  repeated u conversation = 2;
+  repeated Me repositories = 3;
+  m explicit_context = 4;
+  optional string workspace_root_path = 5;
+  repeated m code_blocks = 6;
+  m model_details = 7;
+  repeated string documentation_identifiers = 8;
+  string query = 9;
+  xs code_context = 10;
+  bool rerank_results = 11;
+  m linter_errors = 14;
+  optional bool is_bash = 15;
+  bool rerank_results_v2 = 16;
+  string conversation_id = 17;
+  bool can_handle_filenames_after_language_ids = 18;
+  bool long_context_mode = 19;
+  bool is_eval = 20;
+  string request_id = 21;
+  optional int32 desired_max_tokens = 22;
+  optional bool runnable_code_blocks = 23;
+  oneof context_results {
+    ds file_search_results = 12;
+    ms code_search_results = 13;
+  }
+}

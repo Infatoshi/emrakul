@@ -13,8 +13,8 @@ The Task tool burns 20x quota per call. A PreToolUse hook blocks it, but if you 
 Use the Emrakul CLI (installed globally via `uv tool install`):
 
 ```bash
-emrakul delegate cursor "task"   # Implementation (Opus 4.5) - PRIMARY
-emrakul delegate codex "task"    # Tests, debugging (GPT-5.2 Codex)
+emrakul delegate cursor "task"   # Implementation (Opus 4.6) - PRIMARY
+emrakul delegate codex "task"    # Tests, debugging (GPT-5.3 Codex)
 emrakul delegate kimi "task"     # Internet research (Kimi K2.5)
 emrakul delegate opencode "task" # Quick edits (ZAI GLM 4.7)
 ```

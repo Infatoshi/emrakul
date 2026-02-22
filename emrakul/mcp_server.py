@@ -6,9 +6,9 @@ Exposes tools for:
 - Device routing (local MacBook or remote Theodolos)
 
 Workers:
-- Codex: debugging + tests (GPT-5.2)
+- Codex: debugging + tests (GPT-5.3)
 - Kimi: research, finding documentation
-- Cursor: implementation (Opus 4.5, $20k credits)
+- Cursor: implementation (Opus 4.6, $20k credits)
 - OpenCode: quick edits (xAI GLM 4.7)
 
 Run with: uv run python -m emrakul.mcp_server
@@ -63,7 +63,7 @@ async def delegate_codex(
     device: str = "local",
     timeout: int = DEFAULT_TOOL_TIMEOUT,
 ) -> str:
-    """Delegate a task to Codex (GPT-5.2) for debugging or writing tests.
+    """Delegate a task to Codex (GPT-5.3) for debugging or writing tests.
 
     Best for:
     - Debugging: recursive call tracing, finding root causes
@@ -188,7 +188,7 @@ async def delegate_cursor(
     device: str = "local",
     timeout: Optional[int] = CURSOR_TIMEOUT,
 ) -> str:
-    """Delegate a task to Cursor (Opus 4.5) for implementation work.
+    """Delegate a task to Cursor (Opus 4.6) for implementation work.
 
     PRIMARY IMPLEMENTATION WORKER - $20k credits available.
 

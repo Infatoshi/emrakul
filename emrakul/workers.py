@@ -7,9 +7,9 @@ All workers run in yolo/bypass permissions mode - no approval needed.
 Supports local and remote (Theodolos) execution via device parameter.
 
 Model specifications:
-- Cursor: opus-4.5-thinking (Opus 4.5 Thinking, $20k credits)
+- Cursor: opus-4.6-thinking (Opus 4.6 Thinking, $20k credits)
 - OpenCode: zai-coding-plan/glm-4.7 (xAI GLM 4.7, $200/month plan)
-- Codex: gpt-5.2-codex (GPT-5.2, xhigh reasoning)
+- Codex: gpt-5.3-codex (GPT-5.3, xhigh reasoning)
 - Kimi: default (kimi-for-coding, powered by Kimi K2.5)
 """
 
@@ -25,9 +25,9 @@ THEODOLOS_HOST = "theodolos"  # SSH config name
 THEODOLOS_BIN = "/home/infatoshi/.local/bin"  # CLI binaries location
 
 # Model configurations
-CURSOR_MODEL = "opus-4.5-thinking"
+CURSOR_MODEL = "opus-4.6-thinking"
 OPENCODE_MODEL = "zai-coding-plan/glm-4.7"
-CODEX_MODEL = "gpt-5.2-codex"
+CODEX_MODEL = "gpt-5.3-codex"
 KIMI_MODEL = "kimi-code/kimi-for-coding"
 
 
@@ -115,7 +115,7 @@ async def run_codex(
     device: str = "local",
     timeout: int = 600,
 ) -> WorkerResult:
-    """Run task with Codex CLI (GPT-5.2, xhigh reasoning).
+    """Run task with Codex CLI (GPT-5.3-Codex, xhigh reasoning).
 
     Best for: debugging, test writing, recursive call analysis, code review.
     """
@@ -226,11 +226,11 @@ async def run_cursor(
     device: str = "local",
     timeout: Optional[int] = None,
 ) -> WorkerResult:
-    """Run task with Cursor CLI (Opus 4.5 Thinking).
+    """Run task with Cursor CLI (Opus 4.6 Thinking).
 
     Primary implementation worker. $20k credits available.
     Best for: implementation, refactors, complex multi-file changes.
-    Note: Base Opus 4.5 is not sufficient - must use Thinking variant.
+    Note: Base Opus 4.6 is not sufficient - must use Thinking variant.
     """
     prompt = _build_prompt("cursor", task, context_files)
     escaped_prompt = prompt.replace("'", "'\\''")
